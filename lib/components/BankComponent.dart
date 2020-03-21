@@ -19,7 +19,7 @@ class BankComponent extends StatefulWidget {
 
 class _BankComponentState extends State<BankComponent> {
   String _bankId = '';
-  var _bankDetail;
+  // var _bankDetail;
   String _bankTitle = '';
   String _articleDetail = '';
   List<Widget> articleInstList = new List<Widget>();
