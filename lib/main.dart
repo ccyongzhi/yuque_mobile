@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'dart:io';
 import 'package:http/http.dart' as http;
+import './config/config.dart';
 
 // void main() => runApp(MyApp());
 void main() =>
@@ -99,20 +100,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _setHtmlText() async {
-    var url = 'http://www.baidu.com';
-    // HttpClient httpClient = new HttpClient();
-    // httpClient.getUrl(Uri.parse(url));
-    // .then((HttpClientRequest request) {
-    //   return request.close();
-    // })
-    // .then((HttpClientResponse response) {
-    //   setState(() {
-    //     _htmlText = response.statusCode;
-    //   });
-    // });
-    final response = await http.get(url);
+    var url = '${Config.apiPrefix}/api/v2/user';
+    var headers = {
+      'X-Auth-Token': Config.authToken,
+    };
+    final response = await http.get(url, headers: headers);
     setState(() {
-      _htmlText = response.body.substring(0, 100);
+      _htmlText = response.body;
     });
   }
 
@@ -173,7 +167,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 }
                 // onTap: () { Navigator.pushNamed(context, '/a'); }
                 ),
-            Text('Baidu html content'),
             Text('$_htmlText')
           ],
         ),
