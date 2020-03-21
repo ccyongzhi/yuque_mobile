@@ -6,43 +6,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import './config/config.dart';
 
+import './components/MyPageA.dart';
+
 // void main() => runApp(MyApp());
 void main() =>
     runApp(MaterialApp(home: MyApp(), routes: <String, WidgetBuilder>{
       '/a': (BuildContext context) => MyPageA(),
-      '/b': (BuildContext context) => MyPageB(),
     }));
-
-class MyPageA extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('MyPageA'),
-      ),
-      body: Center(
-        child: GestureDetector(
-          child: Text('返回上一个页面'),
-          onTap: () {
-            Navigator.pop(context);
-          }
-        )),
-    );
-  }
-}
-
-class MyPageB extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text('MyPageB'),
-      ),
-    );
-  }
-}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -78,6 +48,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String _htmlText = '';
+  int _currentTabIndex = 0;
 
   void _setHtmlText() async {
     var url = '${Config.apiPrefix}/user';
@@ -144,9 +115,27 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               },
             ),
-            Text('$_htmlText')
+            Text('$_htmlText'),
           ],
         ),
+      ),
+      bottomNavigationBar: CupertinoTabBar(
+        currentIndex: _currentTabIndex,
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            title: Text('知识库'),
+            icon: Icon(Icons.bookmark),
+          ),
+          BottomNavigationBarItem(
+            title: Text('我的'),
+            icon: Icon(Icons.person),
+          ),
+        ],
+        onTap: (int index) {
+          setState(() {
+            _currentTabIndex = index;
+          });
+        },
       ),
     );
   }
