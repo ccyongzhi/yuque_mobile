@@ -63,7 +63,6 @@ class _MyHomePageState extends State<MyHomePage> {
     final String bankUrl = '${Config.apiPrefix}/users/$userId/repos';
     final responseBank = await http.get(bankUrl, headers: headers);
     final List bankInfoList = jsonDecode(responseBank.body)['data'];
-    print(bankInfoList);
     List<Widget> bankInstList = new List<Widget>();
     bankInfoList.forEach((item) => {
       bankInstList.add(

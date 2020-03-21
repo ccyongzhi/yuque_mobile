@@ -21,9 +21,10 @@ class _BankComponentState extends State<BankComponent> {
   String _bankId = '';
   var _bankDetail;
   String _bankTitle = '';
+  String _articleDetail = '';
+  List<Widget> articleInstList = new List<Widget>();
 
   _BankComponentState(bankId) {
-    print(bankId);
     this._bankId = bankId;
   }
 
@@ -48,11 +49,12 @@ class _BankComponentState extends State<BankComponent> {
     if (bankDetail != null && bankDetail['data'] != null && bankDetail['data']['name'] != null) {
       setState(() {
         _bankTitle = bankDetail['data']['name'];
+        _articleDetail = bankDetail['data']['toc'];
       });
     }
-    setState(() {
-      _bankDetail = bankDetail;
-    });
+    // setState(() {
+    //   _bankDetail = bankDetail;
+    // });
   }
 
   @override
@@ -62,7 +64,7 @@ class _BankComponentState extends State<BankComponent> {
         title: Text('$_bankTitle'),
       ),
       body: Center(
-        child: Text('$_bankDetail'),
+        child: Text('$_articleDetail'),
       ),
     );
   }
