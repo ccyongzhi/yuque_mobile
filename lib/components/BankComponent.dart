@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 
 import '../config/config.dart';
 
+import './ArticleComponent.dart';
+
 class BankComponent extends StatefulWidget {
   String bankId = '';
 
@@ -19,9 +21,8 @@ class BankComponent extends StatefulWidget {
 
 class _BankComponentState extends State<BankComponent> {
   String _bankId = '';
-  // var _bankDetail;
   String _bankTitle = '';
-  String _articleDetail = '';
+  String _bankDetail = '';
   List<Widget> articleInstList = new List<Widget>();
 
   _BankComponentState(bankId) {
@@ -49,12 +50,9 @@ class _BankComponentState extends State<BankComponent> {
     if (bankDetail != null && bankDetail['data'] != null && bankDetail['data']['name'] != null) {
       setState(() {
         _bankTitle = bankDetail['data']['name'];
-        _articleDetail = bankDetail['data']['toc'];
+        _bankDetail = bankDetail['data']['toc'];
       });
     }
-    // setState(() {
-    //   _bankDetail = bankDetail;
-    // });
   }
 
   @override
@@ -64,7 +62,17 @@ class _BankComponentState extends State<BankComponent> {
         title: Text('$_bankTitle'),
       ),
       body: Center(
-        child: Text('$_articleDetail'),
+        child: GestureDetector(
+          child: Text('$_bankDetail'),
+          onTap: () {
+            Navigator.push(
+              context,
+              new MaterialPageRoute(
+                builder: (context) => new ArticleComponent('845908', '5336403')
+              )
+            );
+          },
+        )
       ),
     );
   }
