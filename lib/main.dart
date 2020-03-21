@@ -6,12 +6,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import './config/config.dart';
 
-import './components/MyPageA.dart';
+import './components/BankComponent.dart';
 
 // void main() => runApp(MyApp());
 void main() =>
     runApp(MaterialApp(home: MyApp(), routes: <String, WidgetBuilder>{
-      '/a': (BuildContext context) => MyPageA(),
+      // '/a': (BuildContext context) => MyPageA(),
     }));
 
 class MyApp extends StatelessWidget {
@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: '标题栏'),
+      home: MyHomePage(title: '语雀移动版'),
     );
   }
 }
@@ -47,19 +47,42 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String _htmlText = '';
+  // String _htmlText = '';
   int _currentTabIndex = 0;
+  var _bankInstList = new List<Widget>();
 
   void _setHtmlText() async {
-    var url = '${Config.apiPrefix}/user';
-    var headers = {
+    final headers = {
       'X-Auth-Token': Config.authToken,
       'User-Agent': Config.userAgent,
     };
-    final response = await http.get(url, headers: headers);
-    final userInfo = jsonDecode(response.body);
+    final String userUrl = '${Config.apiPrefix}/user';
+    final responseUser = await http.get(userUrl, headers: headers);
+    final userInfo = jsonDecode(responseUser.body)['data'];
+    final userId = userInfo['id'].toString();
+    final String bankUrl = '${Config.apiPrefix}/users/$userId/repos';
+    final responseBank = await http.get(bankUrl, headers: headers);
+    final List bankInfoList = jsonDecode(responseBank.body)['data'];
+    print(bankInfoList);
+    List<Widget> bankInstList = new List<Widget>();
+    bankInfoList.forEach((item) => {
+      bankInstList.add(
+        GestureDetector(
+          child: Text('${item["name"]}'),
+          onTap: () {
+            Navigator.push(
+              context,
+              new MaterialPageRoute(
+                builder: (context) => new BankComponent(item['id'].toString())
+              )
+            );
+          },
+        )
+      )
+    });
     setState(() {
-      _htmlText = userInfo['data'].toString();
+      // _htmlText = bankInfoList.toString();
+      _bankInstList = bankInstList;
     });
   }
 
@@ -84,40 +107,8 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            CupertinoButton(
-              child: Text('知识库'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  new MaterialPageRoute(
-                    builder: (context) => new MyPageA(),
-                  )
-                );
-              },
-            ),
-            Text('$_htmlText'),
-          ],
-        ),
+      body: new ListView(
+        children: _bankInstList,
       ),
       bottomNavigationBar: CupertinoTabBar(
         currentIndex: _currentTabIndex,
