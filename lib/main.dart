@@ -67,7 +67,14 @@ class _MyHomePageState extends State<MyHomePage> {
     bankInfoList.forEach((item) => {
       bankInstList.add(
         GestureDetector(
-          child: Text('${item["name"]}'),
+          child: Container(
+            height: 50,
+            color: Colors.blue[200],
+            child: Align(
+              alignment: Alignment(-0.9, 0),
+              child: Text('${item["name"]}'),
+            ),
+          ),
           onTap: () {
             Navigator.push(
               context,

@@ -54,7 +54,14 @@ class _BankComponentState extends State<BankComponent> {
         if (article['type'] == 'DOC') {
           articleInstList.add(
             GestureDetector(
-              child: Text('${article["title"]}'),
+              child: Container(
+                height: 50,
+                color: Colors.blue[200],
+                child: Align(
+                  alignment: Alignment(-0.9, 0),
+                  child: Text('${article["title"]}'),
+                ),
+              ),
               onTap: () {
                 Navigator.push(
                   context,
