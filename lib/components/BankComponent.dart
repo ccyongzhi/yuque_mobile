@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:yaml/yaml.dart';
 
 import '../config/config.dart';
 
@@ -22,8 +23,7 @@ class BankComponent extends StatefulWidget {
 class _BankComponentState extends State<BankComponent> {
   String _bankId = '';
   String _bankTitle = '';
-  String _bankDetail = '';
-  List<Widget> articleInstList = new List<Widget>();
+  List<Widget> _articleInstList = new List<Widget>();
 
   _BankComponentState(bankId) {
     this._bankId = bankId;
@@ -48,9 +48,28 @@ class _BankComponentState extends State<BankComponent> {
     final response = await http.get(url, headers: headers);
     final bankDetail = jsonDecode(response.body);
     if (bankDetail != null && bankDetail['data'] != null && bankDetail['data']['name'] != null) {
+      final List articleList = jsonDecode(jsonEncode(loadYaml(bankDetail['data']['toc_yml'])).toString());
+      List<Widget> articleInstList = new List<Widget>();
+      articleList.forEach((article) => {
+        if (article['type'] == 'DOC') {
+          articleInstList.add(
+            GestureDetector(
+              child: Text('${article["title"]}'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (context) => new ArticleComponent('$_bankId', '${article["id"]}')
+                  )
+                );
+              },
+            )
+          )
+        }
+      });
       setState(() {
         _bankTitle = bankDetail['data']['name'];
-        _bankDetail = bankDetail['data']['toc'];
+        _articleInstList = articleInstList;
       });
     }
   }
@@ -61,19 +80,9 @@ class _BankComponentState extends State<BankComponent> {
       appBar: AppBar(
         title: Text('$_bankTitle'),
       ),
-      body: Center(
-        child: GestureDetector(
-          child: Text('$_bankDetail'),
-          onTap: () {
-            Navigator.push(
-              context,
-              new MaterialPageRoute(
-                builder: (context) => new ArticleComponent('845908', '5336403')
-              )
-            );
-          },
-        )
-      ),
+      body: new ListView(
+        children: _articleInstList,
+      )
     );
   }
 }
